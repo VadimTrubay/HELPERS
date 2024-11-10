@@ -137,8 +137,104 @@ Copy code
 npx lint-staged
 Теперь Prettier будет запускаться при каждом коммите, чтобы форматировать измененные файлы.
 
+# REACT
+Для проекта на React настройка ESLint и Prettier будет немного отличаться, но общая структура процесса остается схожей. Вот как можно настроить ESLint и Prettier для React:
 
+1. Установка зависимостей
+   Установите ESLint и необходимые плагины для React:
 
+bash
+Copy code
+npx eslint --init
+Выберите следующие опции:
+
+Тип файла: JavaScript или TypeScript, в зависимости от вашего проекта.
+Framework: React.
+Используемые стили: "Use a popular style guide" или "Answer questions about your style".
+Установка зависимостей: Автоматически установите пакеты.
+Если у вас TypeScript, дополнительно установите:
+
+bash
+Copy code
+npm install --save-dev @typescript-eslint/parser @typescript-eslint/eslint-plugin
+2. Установка Prettier и его интеграция
+   Установите Prettier и необходимые пакеты:
+
+bash
+Copy code
+npm install --save-dev prettier eslint-config-prettier eslint-plugin-prettier
+3. Настройка конфигурации ESLint
+   Настройте .eslintrc.json для интеграции с Prettier:
+
+json
+Copy code
+{
+"extends": [
+"eslint:recommended",
+"plugin:react/recommended",
+"plugin:@typescript-eslint/recommended",
+"plugin:prettier/recommended"
+],
+"plugins": ["react", "@typescript-eslint"],
+"parser": "@typescript-eslint/parser",
+"settings": {
+"react": {
+"version": "detect"
+}
+},
+"rules": {
+"prettier/prettier": "error"
+}
+}
+4. Настройка конфигурации Prettier
+   Создайте файл .prettierrc.json:
+
+json
+Copy code
+{
+"semi": true,
+"singleQuote": true,
+"printWidth": 80,
+"tabWidth": 2,
+"trailingComma": "es5"
+}
+5. Скрипт для форматирования всего проекта
+   Добавьте скрипт для запуска Prettier в package.json:
+
+json
+Copy code
+"scripts": {
+"format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,html}\""
+}
+Запуск скрипта:
+
+bash
+Copy code
+npm run format
+6. Интеграция с Git (Опционально)
+   Для автоматического форматирования при коммитах используйте Husky и lint-staged:
+
+bash
+Copy code
+npx husky-init && npm install
+npm install --save-dev lint-staged
+Настройте lint-staged в package.json:
+
+json
+Copy code
+"lint-staged": {
+"*.{js,jsx,ts,tsx,json,css,scss,html}": "prettier --write"
+}
+7. Настройка Husky для Git-хуков
+   Добавьте скрипт Husky:
+
+bash
+Copy code
+npx husky add .husky/pre-commit "npx lint-staged"
+Теперь при каждом коммите будет автоматически запускаться форматирование файлов с помощью Prettier.
+
+С этими настройками ваш проект React будет использовать ESLint для проверки 
+качества кода и Prettier для автоматического форматирования, что делает код более читаемым и стандартизированным.
 
 
 
