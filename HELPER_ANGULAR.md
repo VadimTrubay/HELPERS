@@ -131,3 +131,78 @@ ng g pipe pipes/filter-products --skip-tests
     темизаций.
     Сайт: ngx-datatable
     Эти библиотеки позволят вам создать мощные и современные интерфейсы с минимальными усилиями.
+
+
+Команда ng generate (ng g) в Angular CLI позволяет генерировать различные сущности проекта. Вот что можно сгенерировать:
+
+1. Компоненты
+   bash
+   Copy code
+   ng g c component-name
+   Создает компонент, включая:
+
+HTML-шаблон
+CSS (или другой стиль, например SCSS, в зависимости от конфигурации проекта)
+Файл TypeScript с логикой компонента
+Тестовый файл (.spec.ts, если включены тесты)
+2. Модули
+   bash
+   Copy code
+   ng g m module-name
+   Создает Angular модуль:
+
+С .module.ts файлом
+(Опционально) добавляет в корневой модуль, если указать флаг --module:
+bash
+Copy code
+ng g m module-name --module app
+3. Директивы
+   bash
+   Copy code
+   ng g d directive-name
+   Создает директиву с соответствующими файлами.
+
+4. Сервисы
+   bash
+   Copy code
+   ng g s service-name
+   Создает сервис, добавляет его в providers (если настроено).
+
+5. Каналы (Pipes)
+   bash
+   Copy code
+   ng g p pipe-name
+   Создает пользовательский pipe.
+
+6. Гварды (Guards)
+   bash
+   Copy code
+   ng g g guard-name
+   Создает guard с возможностью выбора типа: CanActivate, CanActivateChild, CanLoad, и др.
+
+7. Интерфейсы
+   bash
+   Copy code
+   ng g i interface-name
+   Создает интерфейс TypeScript.
+
+8. Классы
+   bash
+   Copy code
+   ng g cl class-name
+   Создает класс TypeScript.
+
+9. Перечисления (Enums)
+   bash
+   Copy code
+   ng g e enum-name
+   Создает перечисление TypeScript.
+
+10. Шаблоны (Schematics)
+    С помощью Angular Schematics можно генерировать кастомные сущности.
+
+Если хотите настроить параметры, например, указать inline-template или пропустить тесты:
+
+bash
+Copy code
+ng g c component-name --inline-template --skip-tests
