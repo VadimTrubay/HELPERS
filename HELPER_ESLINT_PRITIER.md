@@ -1,248 +1,164 @@
-Для Angular и TypeScript линтером, аналогичным Black для Python, является ESLint. Это мощный инструмент для статического
-анализа кода, который помогает поддерживать единый стиль кодирования и выявлять потенциальные ошибки.
 
-Почему ESLint?
-Расширяемость: Вы можете использовать плагины и конфигурации, специально разработанные для Angular (например,
-@angular-eslint).
-Настраиваемость: Легко адаптируется под ваш стиль кодирования с помощью правил, которые можно включать или исключать.
-Автоматическое исправление: Поддерживает автоматическую правку ряда ошибок и форматирования кода.
-Установка ESLint для Angular
-Установите зависимости:
+Here’s an updated GitHub Actions workflow to run both ruff and black linters on pushes to the main and dev branches, as well as for pull requests. This configuration ensures that both linters are executed, and black checks for code formatting.
+
+Updated Workflow
+yaml
+Copy code
+name: Run Linters
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout code
+      - uses: actions/checkout@v4
+
+      # Step 2: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff black
+
+      # Step 4: Run ruff
+      - name: Run Ruff
+        run: ruff check .
+
+      # Step 5: Run Black
+      - name: Run Black
+        run: black --check .
+Explanation:
+ruff step: Runs the ruff check . command to lint the codebase.
+black step: Runs black --check . to verify code formatting. If the code is not formatted properly, it will fail the workflow.
+Python setup: Ensures that Python is available in the GitHub Actions environment and installs the required dependencies.
+Dependencies installation: Installs ruff and black using pip.
+When you push to main or dev branches or open a pull request, this workflow will automatically check the code against ruff and black.
+
+# Pre_commit commands
+
+установить и настроить black and precommit from django
+ChatGPT said:
+ChatGPT
+Чтобы настроить форматирование кода в Django-проекте с использованием black и pre-commit, выполните следующие шаги:
+
+1. Установка black и pre-commit
+   Сначала установите black и pre-commit в вашем виртуальном окружении:
 
 bash
 Copy code
-ng add @angular-eslint/schematics
-Сконвертируйте tslint.json (если мигрируете с TSLint):
+pip install black pre-commit 2. Настройка pre-commit
+Создайте или отредактируйте файл .pre-commit-config.yaml в корневом каталоге вашего проекта. Этот файл будет содержать конфигурацию для pre-commit.
+
+Пример конфигурации для использования black:
+
+yaml
+Copy code
+repos:
+
+- repo: https://github.com/psf/black
+  rev: 23.9.1 # Используйте последнюю стабильную версию
+  hooks:
+  - id: black
+
+3. Установка pre-commit как pre-commit hook
+   После настройки конфигурации, установите pre-commit в ваш Git-репозиторий:
 
 bash
 Copy code
-ng g @angular-eslint/schematics:convert-tslint-to-eslint
-Настройка конфигурации: angular.json будет автоматически обновлен для использования ESLint, и будет добавлен файл
-.eslintrc.json.
+pre-commit install
+Теперь pre-commit будет автоматически запускать black при каждом коммите, форматируя ваш код в соответствии с настройками black.
 
-Пример конфигурации .eslintrc.json для Angular
-json
-Copy code
-{
-"root": true,
-"overrides": [
-{
-"files": ["*.ts"],
-"extends": [
-"eslint:recommended",
-"plugin:@typescript-eslint/recommended",
-"plugin:@angular-eslint/recommended"
-],
-"parserOptions": {
-"project": "tsconfig.json",
-"createDefaultProgram": true
-}
-},
-{
-"files": ["*.html"],
-"extends": ["plugin:@angular-eslint/template/recommended"],
-"parser": "@angular-eslint/template-parser"
-}
-]
-}
-Интеграция с редактором кода
-Для лучшей интеграции:
-
-VS Code: Установите расширение ESLint для подсветки ошибок и предупреждений.
-WebStorm/IntelliJ: Настройте ESLint через Preferences/Settings > Languages & Frameworks > JavaScript > Code Quality
-Tools > ESLint.
-Форматирование кода
-Если вы хотите автоматического форматирования кода, похожего на работу Black, то можно использовать Prettier:
-
-Установите Prettier:
+4. Ручной запуск pre-commit
+   Вы можете запустить pre-commit вручную для всех файлов:
 
 bash
 Copy code
-npm install --save-dev prettier
-Интеграция с ESLint: Добавьте eslint-config-prettier для отключения правил ESLint, которые конфликтуют с Prettier.
+pre-commit run --all-files 5. Запуск black вручную
+Если вы хотите проверить или отформатировать код вручную, вы можете использовать команду:
 
 bash
 Copy code
-npm install --save-dev eslint-config-prettier
-Настройте конфигурацию: Добавьте "prettier" в extends вашего .eslintrc.json.
+black .
+Эта команда применит black ко всем файлам в вашем проекте.
 
-С таким набором инструментов ваш Angular проект будет поддерживать чистый, форматированный и легко читаемый код.
+6. Настройка Django для работы с black
+   Чтобы интегрировать black в рабочий процесс вашего Django-проекта, вы можете настроить ваш редактор или IDE для автоматического форматирования кода с использованием black. В большинстве современных редакторов есть поддержка black через плагины или встроенные функции форматирования.
 
-Чтобы запустить Prettier для всего проекта и привести весь код в соответствие с его правилами, выполните следующие шаги:
+Теперь ваш проект настроен на использование black для форматирования кода, а pre-commit гарантирует, что каждый коммит будет соответствовать этим стандартам.
 
-1. Убедитесь, что Prettier установлен:
-   Если вы еще не установили Prettier в проекте, сделайте это с помощью следующей команды:
+You said:
+[INFO] Initializing environment for https://github.com/psf/black.
+[INFO] Installing environment for https://github.com/psf/black.
+[INFO] Once installed this environment will be reused.
+[INFO] This may take a few minutes...
+An unexpected error has occurred: CalledProcessError: command: ('C:\\Users\\admin\\AppData\\Local\\GitHubDesktop\\app-3.4.3\\resources\\app\\git\\mingw64\\bin\\git.EXE', 'rev-parse', '--git-dir')
+return code: 128
+stdout: (none)
+stderr:
+error: missing config value GIT_CONFIG_VALUE_0
+fatal: unable to parse command-line config
+Check the log at C:\Users\admin\.cache\pre-commit\pre-commit.log
+ChatGPT said:
+ChatGPT
+Ошибка, которую вы видите, связана с тем, что pre-commit не может корректно определить параметры конфигурации Git. Это может быть связано с некорректной установкой Git или конфликтом конфигураций.
 
-bash
-Copy code
-npm install --save-dev prettier
+Вот шаги, которые вы можете предпринять для устранения этой ошибки:
 
-2. Создайте или настройте конфигурационный файл Prettier:
-   Создайте файл .prettierrc или .prettierrc.json в корне вашего проекта, чтобы настроить параметры форматирования.
-   Пример:
+1. Проверьте конфигурацию Git
+   Убедитесь, что конфигурация Git установлена правильно и не содержит ошибок.
 
-json
-Copy code
-{
-"semi": true,
-"singleQuote": true,
-"printWidth": 80,
-"tabWidth": 2,
-"trailingComma": "es5"
-}
-
-3. Запуск Prettier для всего проекта:
-   Вы можете использовать команду prettier для форматирования всех файлов в проекте.
-
-Скрипт для форматирования всех файлов: Добавьте скрипт в package.json:
-
-json
-Copy code
-"scripts": {
-"format": "prettier --write \"src/**/*.{ts,js,json,css,scss,html}\""
-}
-Запуск скрипта:
+Откройте терминал или командную строку и выполните следующие команды:
 
 bash
 Copy code
-npm run format
+git config --list --show-origin
+Эта команда покажет вам все текущие настройки Git, а также откуда они загружаются. Убедитесь, что все конфигурационные файлы корректны.
 
-4. Альтернативный способ (однократный запуск):
-   Вы также можете выполнить Prettier напрямую из командной строки:
+2. Обновите Git
+   Если у вас установлена старая версия Git, обновите его до последней версии. Перезагрузите систему после обновления.
 
-bash
-Copy code
-npx prettier --write "src/**/*.{ts,js,json,css,scss,html}"
-
-5. Интеграция с Git (Опционально):
-   Если вы хотите автоматически запускать Prettier при коммите, можно использовать Husky и lint-staged:
-
-Установите Husky и lint-staged:
+3. Удалите и переустановите pre-commit
+   Если проблема сохраняется, попробуйте удалить и переустановить pre-commit:
 
 bash
 Copy code
-npx husky-init && npm install
-npm install --save-dev lint-staged
-Настройте lint-staged в package.json:
-
-json
-Copy code
-"lint-staged": {
-"src/**/*.{ts,js,json,css,scss,html}": "prettier --write"
-}
-Настройте husky для использования lint-staged: В файле .husky/pre-commit добавьте строку:
+pip uninstall pre-commit
+pip install pre-commit
+После этого попробуйте снова установить хуки:
 
 bash
 Copy code
-npx lint-staged
-Теперь Prettier будет запускаться при каждом коммите, чтобы форматировать измененные файлы.
-
-# REACT
-Для проекта на React настройка ESLint и Prettier будет немного отличаться, но общая структура процесса остается схожей. Вот как можно настроить ESLint и Prettier для React:
-
-1. Установка зависимостей
-   Установите ESLint и необходимые плагины для React:
+pre-commit install 4. Перепроверьте путь Git
+Если вы используете GitHub Desktop или у вас установлено несколько версий Git, убедитесь, что в PATH указывает на правильную версию Git. Чтобы проверить, какой Git используется по умолчанию, выполните команду:
 
 bash
 Copy code
-npx eslint --init
-Выберите следующие опции:
+git --version
+Если путь к Git некорректен, обновите переменные окружения.
 
-Тип файла: JavaScript или TypeScript, в зависимости от вашего проекта.
-Framework: React.
-Используемые стили: "Use a popular style guide" или "Answer questions about your style".
-Установка зависимостей: Автоматически установите пакеты.
-Если у вас TypeScript, дополнительно установите:
+5. Очистите кеш pre-commit
+   Попробуйте очистить кеш pre-commit, который мог быть поврежден:
 
 bash
 Copy code
-npm install --save-dev @typescript-eslint/parser @typescript-eslint/eslint-plugin
-2. Установка Prettier и его интеграция
-   Установите Prettier и необходимые пакеты:
+pre-commit clean 6. Удалите и заново инициализируйте репозиторий
+Если ничего из вышеперечисленного не помогло, создайте новый репозиторий:
 
+Переместите .git папку (скрытая папка в корне проекта) в другое место (для резервного копирования).
+Инициализируйте новый Git-репозиторий:
 bash
 Copy code
-npm install --save-dev prettier eslint-config-prettier eslint-plugin-prettier
-3. Настройка конфигурации ESLint
-   Настройте .eslintrc.json для интеграции с Prettier:
-
-json
-Copy code
-{
-"extends": [
-"eslint:recommended",
-"plugin:react/recommended",
-"plugin:@typescript-eslint/recommended",
-"plugin:prettier/recommended"
-],
-"plugins": ["react", "@typescript-eslint"],
-"parser": "@typescript-eslint/parser",
-"settings": {
-"react": {
-"version": "detect"
-}
-},
-"rules": {
-"prettier/prettier": "error"
-}
-}
-4. Настройка конфигурации Prettier
-   Создайте файл .prettierrc.json:
-
-json
-Copy code
-{
-"semi": true,
-"singleQuote": true,
-"printWidth": 80,
-"tabWidth": 2,
-"trailingComma": "es5"
-}
-5. Скрипт для форматирования всего проекта
-   Добавьте скрипт для запуска Prettier в package.json:
-
-json
-Copy code
-"scripts": {
-"format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,html}\""
-}
-Запуск скрипта:
-
-bash
-Copy code
-npm run format
-6. Интеграция с Git (Опционально)
-   Для автоматического форматирования при коммитах используйте Husky и lint-staged:
-
-bash
-Copy code
-npx husky-init && npm install
-npm install --save-dev lint-staged
-Настройте lint-staged в package.json:
-
-json
-Copy code
-"lint-staged": {
-"*.{js,jsx,ts,tsx,json,css,scss,html}": "prettier --write"
-}
-7. Настройка Husky для Git-хуков
-   Добавьте скрипт Husky:
-
-bash
-Copy code
-npx husky add .husky/pre-commit "npx lint-staged"
-Теперь при каждом коммите будет автоматически запускаться форматирование файлов с помощью Prettier.
-
-С этими настройками ваш проект React будет использовать ESLint для проверки 
-качества кода и Prettier для автоматического форматирования, что делает код более читаемым и стандартизированным.
-
-
-
-
-
-
-
-
-
-
-
+git init
+Настройте pre-commit заново.
+Если после выполнения этих шагов проблема сохраняется, дайте мне знать, и мы попробуем найти другие пути решения проблемы.
