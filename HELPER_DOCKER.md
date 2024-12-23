@@ -10,7 +10,7 @@ alembic upgrade head
 docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
 docker run --name redis-server -p 6379:6379 -d redis
 
-docker run --name probihy_db -p 5432:5432 -e POSTGRES_DB=probihy_db -e POSTGRES_USER=vsi_probihy_user -e POSTGRES_PASSWORD=probihy_password -d postgres
+docker run --name probihy -p 5432:5432 -e POSTGRES_DB=probihy -e POSTGRES_USER=probihy -e POSTGRES_PASSWORD=probihy -d postgres
 Создание новой миграции:
 
 bash
@@ -158,3 +158,158 @@ docker exec -it redis-server redis-cli
 bash
 Copy code
 docker inspect <container_name>
+
+Чтобы передать созданный Docker-контейнер другому человеку и позволить ему запустить его на своей машине, выполните следующие шаги:
+
+1. Сохраните контейнер как образ
+Вам нужно преобразовать ваш запущенный контейнер в Docker-образ. Это делается с помощью команды docker commit:
+
+bash
+Copy code
+docker commit <container_id> <image_name>
+Где:
+
+<container_id> — это ID вашего контейнера, который можно узнать через docker ps -a.
+<image_name> — название, которое вы хотите присвоить вашему образу (например, my_container_image).
+2. Экспортируйте Docker-образ в файл
+Используйте команду docker save, чтобы сохранить образ в файл:
+
+bash
+Copy code
+docker save -o <file_name>.tar <image_name>
+Где:
+
+<file_name> — имя файла, например, my_container_image.tar.
+<image_name> — имя созданного образа.
+После выполнения этой команды файл <file_name>.tar будет создан в текущей директории.
+
+3. Передайте файл
+Передайте файл любым удобным способом (по электронной почте, через облачное хранилище, например Google Drive, или файлообменники).
+
+4. Импорт файла у другого человека
+На стороне получателя выполните следующие действия:
+
+Импортируйте образ:
+Получатель должен использовать команду docker load для загрузки образа:
+
+bash
+Copy code
+docker load -i <file_name>.tar
+Запустите контейнер:
+После импорта образ появится в списке образов (docker images). Получатель сможет запустить контейнер с этим образом:
+
+bash
+Copy code
+docker run -d <image_name>
+5. Дополнительно: использование Docker Hub
+Если вы хотите передать образ через интернет и у вас есть учетная запись на Docker Hub, вы можете загрузить образ туда:
+
+Войдите в Docker Hub:
+bash
+Copy code
+docker login
+Отправьте образ:
+bash
+Copy code
+docker tag <image_name> <your_dockerhub_username>/<repository_name>
+docker push <your_dockerhub_username>/<repository_name>
+Получатель сможет загрузить образ с Docker Hub командой:
+
+bash
+Copy code
+docker pull <your_dockerhub_username>/<repository_name>
+Этот способ удобен, если вам нужно делиться образом с несколькими людьми.
+
+
+ у меня будет три контейнера сформируй команды  CONTAINER ID   IMAGE                 COMMAND                  CREATED          STATUS          PORTS                 
+   NAMES
+b3d4f893a35f   tekra-orchester-api   "sh -c 'alembic upgr…"   21 minutes ago   Up 21 minutes   0.0.0.0:8000->8000/tcp   tekra
+a544f9b63a1e   redis:latest          "docker-entrypoint.s…"   2 days ago       Up 21 minutes   0.0.0.0:6379->6379/tcp   tekra-orchester-redis-1
+9a7f4ee2bf3c   postgres:16.0         "docker-entrypoint.s…"   2 days ago       Up 21 minutes   0.0.0.0:5432->5432/tcp   tekra-orchester-postgres-1
+ChatGPT said:
+ChatGPT
+Для передачи трех контейнеров через Docker Hub, следуйте этим шагам:
+
+1. Создайте образы для каждого контейнера
+Вам нужно преобразовать каждый из ваших контейнеров в образы.
+
+Для контейнера tekra:
+bash
+Copy code
+docker commit b3d4f893a35f tekra-orchester-api:latest
+Для контейнера tekra-orchester-redis-1:
+bash
+Copy code
+docker commit a544f9b63a1e tekra-orchester-redis:latest
+Для контейнера tekra-orchester-postgres-1:
+bash
+Copy code
+docker commit 9a7f4ee2bf3c tekra-orchester-postgres:latest
+2. Загрузите образы в Docker Hub
+Для этого вам нужно предварительно войти в Docker Hub:
+
+bash
+Copy code
+docker login
+Затем выполните команды для каждого образа:
+
+Загрузите образ tekra-orchester-api:
+bash
+Copy code
+docker tag tekra-orchester-api:latest <your_dockerhub_username>/tekra-orchester-api:latest
+docker push <your_dockerhub_username>/tekra-orchester-api:latest
+Загрузите образ tekra-orchester-redis:
+bash
+Copy code
+docker tag tekra-orchester-redis:latest <your_dockerhub_username>/tekra-orchester-redis:latest
+docker push <your_dockerhub_username>/tekra-orchester-redis:latest
+Загрузите образ tekra-orchester-postgres:
+bash
+Copy code
+docker tag tekra-orchester-postgres:latest <your_dockerhub_username>/tekra-orchester-postgres:latest
+docker push <your_dockerhub_username>/tekra-orchester-postgres:latest
+3. Получатель может загрузить образы
+Получатель должен выполнить команды для загрузки образов:
+
+Загрузите tekra-orchester-api:
+bash
+Copy code
+docker pull <your_dockerhub_username>/tekra-orchester-api:latest
+Загрузите tekra-orchester-redis:
+bash
+Copy code
+docker pull <your_dockerhub_username>/tekra-orchester-redis:latest
+Загрузите tekra-orchester-postgres:
+bash
+Copy code
+docker pull <your_dockerhub_username>/tekra-orchester-postgres:latest
+4. Запустите контейнеры у получателя
+После загрузки образов получатель сможет запустить контейнеры. Например:
+
+Для API:
+bash
+Copy code
+docker run -d -p 8000:8000 --name tekra <your_dockerhub_username>/tekra-orchester-api:latest
+Для Redis:
+bash
+Copy code
+docker run -d -p 6379:6379 --name tekra-orchester-redis-1 <your_dockerhub_username>/tekra-orchester-redis:latest
+Для Postgres:
+bash
+Copy code
+docker run -d -p 5432:5432 --name tekra-orchester-postgres-1 <your_dockerhub_username>/tekra-orchester-postgres:latest
+Дополнительно:
+Если ваши контейнеры зависят друг от друга (например, API использует Redis и Postgres), лучше использовать docker-compose для передачи конфигурации. Сообщите, если нужна помощь с созданием docker-compose.yml.
+
+
+4. Резервный вариант: публикация образов
+Если вам нужно минимизировать усилия на стороне получателя, вы можете заранее собрать образы (как описано выше) и загрузить их в Docker Hub. Тогда файл docker-compose.yml можно будет немного изменить, чтобы использовать образы из Docker Hub:
+
+Пример для API:
+
+yaml
+Copy code
+  api:
+    image: <your_dockerhub_username>/tekra-orchester-api:latest
+    ...
+Этот способ особенно удобен, если вы хотите распространять проект для большого количества людей.
