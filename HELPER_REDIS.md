@@ -34,7 +34,7 @@ docker exec -it my-redis-container redis-cli
 
 bash
 Копіювати код
-docker run --name my-redis-container -d -p 6379:6379 redis
+`docker run --name my-redis-container -d -p 6379:6379 redis`
 -p 6379:6379: связывает порт 6379 на хосте с портом 6379 внутри контейнера.
 Теперь Redis будет доступен по адресу localhost:6379 с вашего хостового компьютера.
 

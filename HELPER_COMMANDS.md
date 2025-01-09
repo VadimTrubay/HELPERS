@@ -11,9 +11,9 @@ touch app.py
 PowerShell:
 New-Item -Path . -Name "app.py" -ItemType "file"
 
-Команда mkdir создаёт каталоги, например:
+Команда m[HELPER_DOCKER.md](HELPER_DOCKER.md)kdir создаёт каталоги, например:
 mkdir my_folder # создаст папку my_folder
-
+[HELPER_DOCKER.md](HELPER_DOCKER.md)
 Команды для создания файла в разных оболочках:
 CMD (командная строка Windows):
 
@@ -21,7 +21,7 @@ bash
 Копіювати код
 echo. > app.py
 PowerShell:
-
+[HELPER_DOCKER.md](HELPE[HELPER_DOCKER.md](HELPER_DOCKER.md)R_DOCKER.md)
 bash
 Копіювати код
 New-Item -Path . -Name "app.py" -ItemType "file"

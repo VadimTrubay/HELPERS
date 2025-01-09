@@ -1,4 +1,12 @@
 # Git commands
+
+git status 
+git branch -vv
+git switch -c ...
+git push --set-upstream origin ...
+git branch -vv
+
+
 Чтобы создать новую ветку и опубликовать её на удалённом репозитории, выполните следующие шаги:
 Создайте и переключитесь на новую ветку:
 git push -u origin <new-branch-name>

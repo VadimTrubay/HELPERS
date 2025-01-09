@@ -6,12 +6,111 @@ alembic revision --autogenerate -m 'Init'
 alembic upgrade head
 
 // docker commands
-
+docker run --name postgres -p 5432:5432 -e POSTGRES_DB=postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -d postgres
 docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
 docker run --name redis-server -p 6379:6379 -d redis
+docker run --name redis -d -p 6379:6379 redis
 
-docker run --name probihy -p 5432:5432 -e POSTGRES_DB=probihy -e POSTGRES_USER=probihy -e POSTGRES_PASSWORD=probihy -d postgres
-Создание новой миграции:
+Вот справочник основных команд Docker с краткими пояснениями:
+
+Управление контейнерами
+`docker run [options] IMAGE [command] [args]`
+Запускает новый контейнер из указанного образа.
+Пример: docker run -d -p 8080:80 nginx
+
+`docker start [container_id]`
+Запускает остановленный контейнер.
+
+`docker stop [container_id]`
+Останавливает запущенный контейнер.
+
+`docker restart [container_id]`
+Перезапускает контейнер.
+
+`docker rm [container_id]`
+Удаляет контейнер.
+Пример: docker rm my_container
+
+`docker ps`
+Показывает список запущенных контейнеров.
+
+`docker ps -a`
+Показывает список всех контейнеров (включая остановленные).
+
+`docker logs [container_id]`
+Показывает логи контейнера.
+
+`docker exec [options] [container_id] [command]`
+Выполняет команду внутри работающего контейнера.
+Пример: docker exec -it my_container bash
+
+`docker attach [container_id]`
+Подключается к работающему контейнеру.
+
+Управление образами
+`docker images`
+Показывает список локальных образов.
+
+`docker pull [image_name]`
+Скачивает образ из Docker Hub или другого реестра.
+Пример: docker pull ubuntu:latest
+
+`docker build [options] PATH`
+Собирает образ из Dockerfile.
+Пример: docker build -t my_image .
+
+`docker rmi -f [image_name]`
+Удаляет образ.
+Пример: docker rmi my_image
+
+`docker tag [image_id] [repository_name]:[tag]`
+Присваивает метку образу.
+Пример: docker tag my_image my_repo/my_image:1.0
+
+`docker push [repository_name]:[tag]`
+Загружает образ в Docker Hub или другой реестр.
+
+Управление томами
+`docker volume create [volume_name]`
+Создаёт том.
+
+`docker volume ls`
+Показывает список томов.
+
+`docker volume rm [volume_name]`
+Удаляет том.
+
+Сеть
+`docker network create [network_name]`
+Создаёт сеть.
+
+`docker network ls`
+Показывает список сетей.
+
+`docker network connect [network_name] [container_id]`
+Подключает контейнер к сети.
+
+`docker network disconnect [network_name] [container_id]`
+Отключает контейнер от сети.
+
+Служебные команды
+`docker inspect [container_id|image_name]`
+Показывает подробную информацию о контейнере или образе.
+
+`docker stats`
+Отображает использование ресурсов (CPU, память и др.) для контейнеров.
+
+`docker system prune`
+Удаляет неиспользуемые объекты (остановленные контейнеры, образы, тома).
+
+`docker info`
+Показывает информацию о текущей установке Docker.
+
+`docker version`
+Показывает версии клиента и сервера Docker.
+
+
+Cоздание новой миграции:
 
 bash
 Copy code
@@ -34,7 +133,7 @@ alembic current
 
 Работа с Docker
 1. Контейнеры PostgreSQL и Redis
-Запуск PostgreSQL:
+Запуск PostgreSQL:[HELPER_REDIS.md](HELPER_REDIS.md)
 
 bash
 Copy code
